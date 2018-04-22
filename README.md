@@ -25,8 +25,10 @@ Subscriber must filter services by 2 or 3 times `poll_interval` filter for detec
 
 # Future changes
 
- * service uptime info
- * optinal service telemetry
+ * mandatory telemetry
+   * service uptime info
+   * machine uptime info
+ * optinal telemetry
    * cpu load
  * http -> ws heartbeat
    * 2 separate websocket servers. Do not send any subscribe message for stream start.
