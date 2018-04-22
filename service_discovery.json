@@ -1,0 +1,6 @@
+{
+  "main_ip" : "localhost",
+  "port" : 1339,
+  "ws_port" : 1340,
+  "service_name" : "test_service"
+}
