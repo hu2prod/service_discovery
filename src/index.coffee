@@ -74,8 +74,8 @@ class Service_discovery_service
       now = Date.now()
       loc_v_id = -1
       update = ()=>
-        return if loc_v_id == service_table_version_id
-        loc_v_id = service_table_version_id
+        return if loc_v_id == @_service_table_version_id
+        loc_v_id = @_service_table_version_id
         msg = {
           service2ip : @service2ip_hash_hash
           ip2service : @ip2service_hash_hash
