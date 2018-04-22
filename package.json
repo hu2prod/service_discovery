@@ -28,6 +28,7 @@
   },
   "dependencies": {
     "fy": "github:hu2prod/fy",
+    "iced-runtime": "^1.0.3",
     "ws": "^5.1.1"
   }
 }
