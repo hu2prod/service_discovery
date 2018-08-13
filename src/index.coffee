@@ -8,13 +8,14 @@ url = require 'url'
 @config = "./service_discovery.json"
 
 @_read_config = (opt={})->
-  if !fs.existsSync module.config
-    throw new Error "Can't find config #{module.config}"
-  config_str = fs.readFileSync module.config
-  try
-    config = JSON.parse config_str
-  catch e
-    throw new Error "Can't parse config. #{e.message}"
+  if !config = opt.config
+    if !fs.existsSync module.config
+      throw new Error "Can't find config #{module.config}"
+    config_str = fs.readFileSync module.config
+    try
+      config = JSON.parse config_str
+    catch e
+      throw new Error "Can't parse config. #{e.message}"
   
   if !config.port?
     throw new Error "Can't find port for discovery service"
