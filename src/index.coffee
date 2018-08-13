@@ -107,12 +107,12 @@ class Service_discovery_service
     @_service_table_version_id = (@_service_table_version_id+1) % 4096
     return
 
-@server = ()->
-  config = module._read_config server:true
+@server = (config)->
+  config = module._read_config {config, server:true}
   new Service_discovery_service config
 
-@client = ()->
-  config = module._read_config client:true
+@client = (config)->
+  config = module._read_config {config, client:true}
   # ###################################################################################################
   #    main_ip detect
   # ###################################################################################################
