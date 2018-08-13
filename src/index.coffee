@@ -1,4 +1,5 @@
 module = @
+require 'fy'
 require 'fy/experimental'
 fs  = require 'fs'
 os  = require 'os'
@@ -8,14 +9,18 @@ url = require 'url'
 @config = "./service_discovery.json"
 
 @_read_config = (opt={})->
-  if !config = opt.config
+  manual_config = opt.config
+  loop
     if !fs.existsSync module.config
+      break if manual_config
       throw new Error "Can't find config #{module.config}"
+    
     config_str = fs.readFileSync module.config
     try
       config = JSON.parse config_str
     catch e
       throw new Error "Can't parse config. #{e.message}"
+    obj_set config, manual_config
   
   if !config.port?
     throw new Error "Can't find port for discovery service"
