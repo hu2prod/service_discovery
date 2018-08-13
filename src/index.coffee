@@ -21,6 +21,7 @@ url = require 'url'
     catch e
       throw new Error "Can't parse config. #{e.message}"
     obj_set config, manual_config
+    break
   
   if !config.port?
     throw new Error "Can't find port for discovery service"
