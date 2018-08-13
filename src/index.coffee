@@ -70,6 +70,10 @@ class Service_discovery_service
         if /^::ffff:/.test ip
           ip = ip.replace /^::ffff:/, ''
         {service_name, extra} = req_url.query
+        try
+          extra = JSON.parse extra
+        catch e
+          extra = undefined
         @service_heartbeat ip, service_name, extra
       
       res.writeHead 200, {}
