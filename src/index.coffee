@@ -40,8 +40,12 @@ url = require 'url'
   config
 
 class Service_discovery_service
+  # LEGACY
   service2ip_hash_hash : {}
   ip2service_hash_hash : {}
+  # NEW
+  service2ip_hash_hash_extra : {}
+  ip2service_hash_hash_extra : {}
   _service_table_version_id : 0
   port    : 0
   ws_port : 0
@@ -51,6 +55,8 @@ class Service_discovery_service
   constructor:({@port, @ws_port})->
     @service2ip_hash_hash = {}
     @ip2service_hash_hash = {}
+    @service2ip_hash_hash_extra = {}
+    @ip2service_hash_hash_extra = {}
     @start()
   
   start : ()->
@@ -63,8 +69,8 @@ class Service_discovery_service
         ip = req.socket.remoteAddress
         if /^::ffff:/.test ip
           ip = ip.replace /^::ffff:/, ''
-        {service_name} = req_url.query
-        @service_heartbeat ip, service_name
+        {service_name, extra} = req_url.query
+        @service_heartbeat ip, service_name, extra
       
       res.writeHead 200, {}
       res.end ''
@@ -86,6 +92,8 @@ class Service_discovery_service
         msg = {
           service2ip : @service2ip_hash_hash
           ip2service : @ip2service_hash_hash
+          service2ip_obj : @service2ip_hash_hash_extra
+          ip2service_obj : @ip2service_hash_hash_extra
         }
         socket.send JSON.stringify msg, null, 2
       update()
@@ -102,13 +110,17 @@ class Service_discovery_service
     @_ws_server.close()
     return
   
-  service_heartbeat : (ip, service_name)->
+  service_heartbeat : (ip, service_name, extra)->
     @service2ip_hash_hash[service_name] ?= {}
     @ip2service_hash_hash[ip] ?= {}
+    @service2ip_hash_hash_extra[service_name] ?= {}
+    @ip2service_hash_hash_extra[ip] ?= {}
     
     now = Date.now()
     @service2ip_hash_hash[service_name][ip] = now
     @ip2service_hash_hash[ip][service_name] = now
+    @service2ip_hash_hash_extra[service_name][ip] = {now, extra}
+    @ip2service_hash_hash_extra[ip][service_name] = {now, extra}
     
     @_service_table_version_id = (@_service_table_version_id+1) % 4096
     return
@@ -165,7 +177,7 @@ class Service_discovery_service
   working = true
   do ()->
     while working
-      req = http.get "http://#{main_ip}:#{port}/heartbeat?service_name=#{service_name}"
+      req = http.get "http://#{main_ip}:#{port}/heartbeat?service_name=#{service_name}&extra=#{encodeURIComponent JSON.stringify config.extra}"
       req.setTimeout 2000
       req.end()
       await
